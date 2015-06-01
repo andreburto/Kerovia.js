@@ -1,0 +1,16 @@
+{
+    "name": "kerovia",
+    "version": "0.2.1",
+    "description": "The code behind http://kerovia.net",
+    "author": "Andrew Burton",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/andreburto/Kerovia.js.git"
+    },
+    "dependencies": {}
+        "http": "*",
+        "fs": "0.12.4"
+    },
+    "private": true,
+    "license": "MIT"
+}
