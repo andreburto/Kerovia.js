@@ -7,7 +7,7 @@
         "type": "git",
         "url": "https://github.com/andreburto/Kerovia.js.git"
     },
-    "dependencies": {}
+    "dependencies": {
         "http": "*",
         "fs": "0.12.4"
     },
