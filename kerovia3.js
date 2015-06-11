@@ -1,5 +1,7 @@
-var http = require('http'),
-    fs = require('fs');
+var http = require('http');
+var loadFile = require('./lib/loadFile.js');
+var mimeTypes = require('./lib/mimeTypes.js');
+
 
 var settings = {
     'default': 'test.html',
@@ -8,39 +10,11 @@ var settings = {
     'port': 80
 };
 
-function loadFile(fileName) {
-    
-    function isFile(fileName) {
-        try {
-            var theFile = settings.filePath + '/' + fileName;
-            fs.accessSync(theFile, fs.R_OK);
-            return true;
-        } catch(ex) {
-            return false;
-        }
-    }
-    
-    function cleanFileName(fileName) {
-        while (fileName.substring(0,1)=='.' || fileName.substring(0,1)=='/') {
-            fileName = fileName.substring(1);
-        }
-        return fileName;
-    }
-    
-    function getFile(fileName) {
-        var theFile = cleanFileName(fileName);
-        if (isFile(theFile) == false) { return ""; }
-        theFile = settings.filePath + '/' + theFile;
-        return fs.readFileSync(theFile).toString();
-    }
-    
-    return getFile(fileName);
-}
-
 function webDisplay(req, res) {
     
     function handleRequest(req, res) {
         var fileName = req.url;
+        var mimeType;
         
         if (fileName == '/')
             fileName = settings.default;
@@ -49,12 +23,18 @@ function webDisplay(req, res) {
         
         var fileContent = loadFile(fileName);
         
-        if (fileContent == "")
+        if (fileContent == "") {
             fileContent = loadFile(settings.fourohfour);
+            mimeType = mimeTypes(settings.fourohfour);
+        } else {
+            mimeType = mimeTypes(fileName);
+        }
         
-        console.log("Serving: "+fileName);
+        // Log activity
+        console.log("Serving: "+fileName+", Type: "+mimeType);
         
-        res.writeHead(200, {"Content-Type": "text/html"});
+        // Return requested file
+        res.writeHead(200, {"Content-Type": mimeType});
         res.write(fileContent);
         res.end();
     }
