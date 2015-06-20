@@ -1,16 +1,17 @@
 var http = require('http');
 var loadFile = require('./lib/loadFile.js');
 var mimeTypes = require('./lib/mimeTypes.js');
+var settings = require('./settings.js');
 
-
-var settings = {
-    'default': 'test.html',
-    'filePath': '/home/andrew/kerovia.net/files',
-    'fourohfour': '404.html',
-    'port': 80
-};
 
 function webDisplay(req, res) {
+    
+    function handleError(res, msg) {
+        if (msg == undefined) { msg = "No message."; }
+        res.writeHead(500, {"Content-Type": "text/plain"});
+        res.write(msg);
+        res.end();        
+    }
     
     function handleGetRequest(req, res) {
         var fileName = req.url;
@@ -43,7 +44,22 @@ function webDisplay(req, res) {
     }
     
     function handlePostRequest(req, res) {
-        
+        var body = "";
+        // Read data
+        req.on('data', function() {
+            body += data;
+            if (body.length > 1e6)
+                handleError(res, "Too much data.");
+                req.connection.destroy();
+        });
+        // Handle request
+        req.on('end', function() {
+            var outputData = "";
+            var postData = qs.parse(body);
+            var operation = req.url.substring(1);
+            
+            
+        });
     }
     
     switch(req.method) {
@@ -51,12 +67,10 @@ function webDisplay(req, res) {
             handleGetRequest(req, res);
             break;
         case "POST":
-            
+            handlePostRequest(req, res);
             break;
         default:
-        res.writeHead(500, {"Content-Type": "text/plain"});
-        res.write("500 Error");
-        res.end();
+            handleError(res, "Improper method.");
     }
 };
 
