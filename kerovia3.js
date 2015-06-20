@@ -2,7 +2,6 @@ var http = require('http');
 var loadFile = require('./lib/loadFile.js');
 var mimeTypes = require('./lib/mimeTypes.js');
 
-
 var settings = {
     'default': 'test.html',
     'filePath': '/home/andrew/kerovia.net/files',
