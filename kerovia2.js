@@ -2,7 +2,7 @@ var http = require('http'),
     fs = require('fs');
 
 var pics = null;
-var port = 8080;
+var port = 8090;
 
 request = {
     protocol: 'http:',

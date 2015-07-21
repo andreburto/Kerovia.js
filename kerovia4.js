@@ -1,4 +1,5 @@
-var http = require('http');
+var http = require('http'),
+    url = require('url');
 var loadFile = require('./lib/loadFile.js');
 var mimeTypes = require('./lib/mimeTypes.js');
 var settings = require('./settings.js');
@@ -46,7 +47,7 @@ function webDisplay(req, res) {
     function handlePostRequest(req, res) {
         var body = "";
         // Read data
-        req.on('data', function() {
+        req.on('data', function(data) {
             body += data;
             if (body.length > 1e6)
                 handleError(res, "Too much data.");
@@ -54,11 +55,17 @@ function webDisplay(req, res) {
         });
         // Handle request
         req.on('end', function() {
+            console.log("body: "+body);
             var outputData = "";
-            var postData = qs.parse(body);
+            var postData = url.parse(body.toString());
             var operation = req.url.substring(1);
             
+            console.log(req.url+"\n"+operation);
             
+            res.writeHead(200, {"Content-Type": "text/plain"});
+            res.write("Body: ");
+            res.write(body.toString());
+            res.end();
         });
     }
     
