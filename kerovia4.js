@@ -1,13 +1,15 @@
-var http = require('http'),
+var querystring = require('querystring'),
+    http = require('http'),
     url = require('url');
 var loadFile = require('./lib/loadFile.js');
 var mimeTypes = require('./lib/mimeTypes.js');
+var postActions = require('./postActions.js');
 var settings = require('./settings.js');
-
 
 function webDisplay(req, res) {
     
     function handleError(res, msg) {
+        req.connection.destroy();
         if (msg == undefined) { msg = "No message."; }
         res.writeHead(500, {"Content-Type": "text/plain"});
         res.write(msg);
@@ -49,23 +51,25 @@ function webDisplay(req, res) {
         // Read data
         req.on('data', function(data) {
             body += data;
-            if (body.length > 1e6)
+            if (body.length > 1e8)
                 handleError(res, "Too much data.");
-                req.connection.destroy();
         });
         // Handle request
         req.on('end', function() {
-            console.log("body: "+body);
             var outputData = "";
-            var postData = url.parse(body.toString());
+            var postData = querystring.parse(body.toString());
             var operation = req.url.substring(1);
             
-            console.log(req.url+"\n"+operation);
+            // Output
+            for(var cnt = 0; cnt < postActions.length; cnt++) {
+                if (postActions[cnt].name == operation) {
+                    postActions[cnt].func(res, postData);
+                    return;
+                }
+            }
             
-            res.writeHead(200, {"Content-Type": "text/plain"});
-            res.write("Body: ");
-            res.write(body.toString());
-            res.end();
+            // Error
+            handleError(res, "No such action as: "+operation);
         });
     }
     
