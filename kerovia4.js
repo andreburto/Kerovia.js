@@ -8,12 +8,15 @@ var settings = require('./settings.js');
 
 function webDisplay(req, res) {
     
+    function logRequest(path, method) {
+        console.log("Method: "+method+", Path: "+path);
+    }
+    
     function handleError(res, msg) {
-        req.connection.destroy();
         if (msg == undefined) { msg = "No message."; }
         res.writeHead(500, {"Content-Type": "text/plain"});
         res.write(msg);
-        res.end();        
+        res.end();
     }
     
     function handleGetRequest(req, res) {
@@ -38,7 +41,7 @@ function webDisplay(req, res) {
         }
         
         // Log activity
-        console.log("Serving: "+fileName+", Type: "+mimeType);
+        logRequest(fileName, "GET");
         
         // Return requested file
         res.writeHead(statusCode, {"Content-Type": mimeType});
@@ -60,7 +63,10 @@ function webDisplay(req, res) {
             var postData = querystring.parse(body.toString());
             var operation = req.url.substring(1);
             
-            // Output
+            // Log request
+            logRequest(operation, "POST");
+            
+            // Find Output function
             for(var cnt = 0; cnt < postActions.length; cnt++) {
                 if (postActions[cnt].name == operation) {
                     postActions[cnt].func(res, postData);
@@ -68,8 +74,8 @@ function webDisplay(req, res) {
                 }
             }
             
-            // Error
-            handleError(res, "No such action as: "+operation);
+            // If there's no function
+            handleError(res, "No such action as: "+operation)
         });
     }
     

@@ -8,8 +8,9 @@
         "url": "https://github.com/andreburto/Kerovia.js.git"
     },
     "dependencies": {
+        "querystring": "*",
         "http": "*",
-        "fs": "0.12.4"
+        "fs": "*"
     },
     "private": true,
     "license": "MIT"
