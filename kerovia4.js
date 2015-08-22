@@ -83,9 +83,9 @@ function webDisplay(req, res) {
         case "GET":
             handleGetRequest(req, res);
             break;
-        case "POST":
-            handlePostRequest(req, res);
-            break;
+        //case "POST":
+        //    handlePostRequest(req, res);
+        //    break;
         default:
             handleError(res, "Improper method.");
     }
